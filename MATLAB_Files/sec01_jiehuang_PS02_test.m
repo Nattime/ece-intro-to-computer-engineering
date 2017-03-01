@@ -1,0 +1,156 @@
+clear;clc
+
+%reads from excel
+x = xlsread('studentGrades.xls');
+%stores size of x into r for rows and c for colums
+[r c] = size(x);
+
+%for loop to check every row on the matrix
+for rows = 1:r
+%prints the student number each time it loops
+    fprintf('Student%.0f data:\n', rows)
+    fprintf('---------------\n')
+    
+%for loop to calculate the homework grades and divide by the counter and
+%prints the grade onto screen
+    psgrade = 0;
+    npsgrade = 0;
+    counter = 0;
+    ncounter = 0;
+    for cols = 1:c
+        if (cols <= 5)
+            if (isnan(x(rows,cols)) == 0)
+                psgrade = psgrade + x(rows,cols);
+                counter = counter + 1;
+            else
+                x(rows,cols) = 0;
+                npsgrade = npsgrade + x(rows,cols);
+                ncounter = ncounter + 1;
+            end
+        end
+    end
+    totalcounter = counter + ncounter;
+    psgradetotal = ((((psgrade+npsgrade)/totalcounter)/2)*10);
+    fprintf('PS grade:            %.2f\n', psgradetotal);
+        
+%for loop to calculate the project grade, place a counter on cells that
+%have a value and prints the project grade
+    proj = 0;
+    nproj = 0;
+    counter1 = 0;
+    ncounter1 = 0;
+    for cols = 1:c
+        if (cols > 5 && cols <= 8)
+            if (isnan(x(rows,cols)) == 0)
+                proj = proj + x(rows,cols);
+                counter1 = counter1 + 1;
+            else
+                x(rows,cols) = 0;
+                nproj = nproj + x(rows,cols);
+                ncounter1 = ncounter1 + 1;
+            end
+        end
+    end
+    totalcounter1 = counter1 + ncounter1;
+    projgrade = ((((proj+nproj)/totalcounter1))/5)*15;
+    fprintf('PROJ grade:          %.2f\n', projgrade);
+    
+%for loop for colums 12 to 15, calculates the recitation quiz grades
+%and puts counters on stored cells, then prints grade
+    recq = 0;
+    nrecq = 0;
+    counter2 = 0;
+    ncounter2 = 0;
+    for cols = 1:c
+        if (cols > 11 && cols <= 15)
+            if (isnan(x(rows,cols)) == 0)
+                recq = recq + x(rows,cols);
+                counter2 = counter2 + 1;
+            else
+                x(rows,cols) = 0;
+                nrecq = nrecq + x(rows,cols);
+                ncounter2 = ncounter2 + 1;
+            end
+        end
+    end
+    totalcounter2 = counter2 + ncounter2;
+    recqgrade = (((recq+nrecq)/totalcounter2)/1.25)*5;
+    fprintf('RECQ grade:          %.2f\n', recqgrade);
+
+%stores grade of attendance and prints output
+    attendancecounter = 0;
+    attendancegrade = (x(rows,end));
+    attendancecounter = attendancecounter + 1;
+    fprintf('Attendance grade:    %.2f\n', attendancegrade);
+
+%for loop for colums 9 to 11, evaluate exams 1 to 3
+    examcounter = 0;
+    examcounter1 = 0;
+    examcounter2 = 0;
+    for cols = 1:c
+        if(cols >= 9 && cols <=11)
+            if (isnan(x(rows,cols)) == 0)
+                if (cols == 9)
+                    exam01 = x(rows,9);
+                    examcounter = examcounter + 1;
+                    fprintf('EXAM01 score:        %.2f\n', exam01);
+                    fprintf('EXAM01 percentage towards overall grade:  %.2f\n', exam01*.15);
+                elseif (cols == 10)
+                    exam02 = x(rows,10);
+                    examcounter1 = examcounter1 + 1;
+                else
+                    exam03 = x(rows,11);
+                    examcounter2 = examcounter2 + 1;
+                    totalexamgrade = ((exam01*.15)+ (exam02*.2) + (exam03*.3));
+                    fprintf('Overall EXAMs percentage towards overall grade: %3.2f\n', totalexamgrade')
+                end
+            else
+                if (cols == 9)
+                    x(rows,9) = 0;
+                    exam01 = x(rows,9);
+                    fprintf('EXAM01 score:        %.2f\n', exam01);
+                    fprintf('EXAM01 percentage towards overall grade:  %.2f\n', exam01*.15);
+                elseif (cols == 10)
+                    x(rows,10) = 0;
+                    exam02 = x(rows,10);
+                    lowestgrade = 150 - exam01;
+                    if (lowestgrade > 100)
+                        fprintf('Can''t get lowest PS or RECQ grades dropped. Exam01 score is too low.\n')
+                    else
+                        fprintf('Lowest possible Exam02 grade (to drop lowest PS and RECQ grades):  %.2f\n', lowestgrade);
+                    end
+                else
+                    x(rows,11) = 0;
+                    exam03 = x(rows,11);
+                end
+            end
+        end
+    end
+%calculates the grade earned till this point and divide by total grade that
+%can be earned at this point
+    totalgrade = (2*counter) + (counter1*5) + (counter2*1.25) + ((examcounter)*15) + (examcounter1*20) + (examcounter2*30) + (attendancecounter*5);
+    currentgrade = (psgradetotal) + (projgrade) + (recqgrade) + ((exam01)*.15) + (exam02*.2) + (exam03*.3) + attendancegrade;
+    grade = (currentgrade/totalgrade) * 100;
+%grade is put into if statement to give a letter grade and outputed
+    if(grade <= 100 && grade >= 90)
+        lettergrade = 'A';
+    elseif(grade < 90 && grade >=85)
+        lettergrade = 'B+';
+    elseif(grade < 85 && grade >= 80)
+        lettergrade = 'B';
+    elseif(grade < 80 && grade >= 75)
+        lettergrade = 'C+';
+    elseif(grade < 75 && grade >= 70)
+        lettergrade = 'C';
+    elseif(grade < 70 && grade >= 60)
+        lettergrade = 'D';
+    else
+        lettergrade = 'F';
+    end
+%print student grade, percentage grade of earned grade by total grade to be
+%earned at the time, lettergrade
+    fprintf('Student%2.0f''s current grade is %.2f out of %.2f\n', rows, currentgrade, totalgrade);
+    fprintf('Numerical grade:  %.2f\n', grade);
+    fprintf('Letter grade: %s\n', lettergrade);
+    fprintf('\n')
+end

@@ -1,0 +1,31 @@
+% Import Data into MatLab
+% type in help xlsread to see how to use this function
+% you will need to know how many times you want to repeat the analysis
+
+% run a loop, on each iteration, analyze the data of a SINGLE student
+
+% keep track of the totals for each group of assignment (i.e. PSs, PROJs,...)
+
+% When adding up items, make sure you neglect those that are NaN - find
+% them and don't use them - use isnan
+
+% When a student has not take EXAM02, then you need to find the EXAM02
+% score that would keep the AVG of the EXAM01+EXAM02 at 75%, not anything
+% lower than this
+
+% Once you have the earned percentage and the total percentage, then you
+% can calcualate the current numerical grade, and see in which range this
+% grade falls to find its letter grade equivalent.
+
+%{
+netid: jiehuang
+collaborators: NONE
+Project 2
+%}
+%{
+pseudocode:
+read/import data from exel
+store size of matrix of the exel data into variables
+use a for loop to impliment the rows from the beginning to the end of the row
+within the row for loop, nested for loop for colums
+%}
